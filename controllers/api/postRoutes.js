@@ -1,14 +1,13 @@
 const router = require('express').Router();
 const { Post } = require('../../models');
-const withAuth = require('../../utils/auth'); // Add your authentication middleware if needed
+const withAuth = require('../../utils/auth'); // Middleware for authentication
 
-// Route to create a new post
+// POST route to create a new post
 router.post('/', withAuth, async (req, res) => {
-    // Implement logic to create a post
     try {
         const newPost = await Post.create({
             ...req.body,
-            userId: req.session.userId,
+            userId: req.session.userId, // Assuming the user ID is stored in the session
         });
         res.status(200).json(newPost);
     } catch (err) {
@@ -19,17 +18,17 @@ router.post('/', withAuth, async (req, res) => {
 // PUT route to update an existing post
 router.put('/:id', withAuth, async (req, res) => {
     try {
-        const updatedPost = await Post.update(req.body, {
+        const [affectedRows] = await Post.update(req.body, {
             where: {
                 id: req.params.id,
-                userId: req.session.userId,
+                userId: req.session.userId, // Ensuring users can only update their posts
             },
         });
-        if (!updatedPost) {
+        if (affectedRows === 0) {
             res.status(404).json({ message: 'No post found with this id!' });
             return;
         }
-        res.json(updatedPost);
+        res.json({ message: 'Post updated successfully' });
     } catch (err) {
         res.status(500).json(err);
     }
@@ -38,23 +37,23 @@ router.put('/:id', withAuth, async (req, res) => {
 // DELETE route to delete a post
 router.delete('/:id', withAuth, async (req, res) => {
     try {
-        const postData = await Post.destroy({
+        const deletedRows = await Post.destroy({
             where: {
                 id: req.params.id,
-                userId: req.session.userId,
+                userId: req.session.userId, // Ensuring users can only delete their posts
             },
         });
-        if (!postData) {
+        if (deletedRows === 0) {
             res.status(404).json({ message: 'No post found with this id!' });
             return;
         }
-        res.json(postData);
+        res.json({ message: 'Post deleted successfully' });
     } catch (err) {
         res.status(500).json(err);
     }
 });
 
-// Read operation - Get all posts
+// GET route to read all posts
 router.get('/', async (req, res) => {
     try {
         const postData = await Post.findAll();

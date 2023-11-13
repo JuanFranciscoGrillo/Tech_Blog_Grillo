@@ -1,14 +1,14 @@
 const router = require('express').Router();
 const { User } = require('../../models');
-const bcrypt = require('bcrypt'); // Only if you need bcrypt in this file
+const bcrypt = require('bcrypt');
 
 // Route to register a new user
 router.post('/signup', async (req, res) => {
-    // Implement user signup logic
     try {
+        const hashedPassword = await bcrypt.hash(req.body.password, 10); // Hashing the password
         const newUser = await User.create({
             username: req.body.username,
-            password: req.body.password,
+            password: hashedPassword,
         });
 
         req.session.save(() => {
@@ -25,7 +25,6 @@ router.post('/signup', async (req, res) => {
 
 // Route for user login
 router.post('/login', async (req, res) => {
-    // Implement user login logic
     try {
         const userData = await User.findOne({ where: { username: req.body.username } });
         if (!userData) {
@@ -33,7 +32,7 @@ router.post('/login', async (req, res) => {
             return;
         }
 
-        const validPassword = await userData.checkPassword(req.body.password);
+        const validPassword = await bcrypt.compare(req.body.password, userData.password);
         if (!validPassword) {
             res.status(400).json({ message: 'Incorrect username or password, please try again' });
             return;

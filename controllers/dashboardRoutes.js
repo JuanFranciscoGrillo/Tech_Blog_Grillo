@@ -17,7 +17,7 @@ router.get('/', withAuth, async (req, res) => {
                 },
                 {
                     model: Comment,
-                    attributes: ['commentText', 'createdAt'],
+                    attributes: ['content', 'createdAt'], // Assuming the field is 'content'
                     include: {
                         model: User,
                         attributes: ['username']
@@ -35,6 +35,7 @@ router.get('/', withAuth, async (req, res) => {
             loggedIn: req.session.loggedIn // Assuming you track login status in the session
         });
     } catch (err) {
+        // Handle errors and respond with an error message
         res.status(500).send(err);
     }
 });
