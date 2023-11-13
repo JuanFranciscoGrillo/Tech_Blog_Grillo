@@ -1,0 +1,19 @@
+{{!-- Extend the main layout --}}
+{{#extend "main"}}
+
+{{#content "body"}}
+    <h1>Your Dashboard</h1>
+    <a href="/dashboard/new">Create New Post</a>
+    {{#each userPosts as |post|}}
+        <div class="post">
+            <h3>{{post.title}}</h3>
+            <p>{{post.content}}</p>
+            <button onclick="location.href='/dashboard/edit/{{post.id}}'">Edit</button>
+            <button onclick="location.href='/dashboard/delete/{{post.id}}'">Delete</button>
+        </div>
+    {{else}}
+        <p>You have not created any posts yet.</p>
+    {{/each}}
+{{/content}}
+
+{{/extend}}
