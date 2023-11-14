@@ -2,14 +2,22 @@ const router = require('express').Router();
 const { Post, User, Comment } = require('../models');
 const withAuth = require('../utils/auth'); // Replace with your actual authentication middleware
 
+// Helper function for standardized error response
+const errorResponse = (res, statusCode, message) => {
+    return res.status(statusCode).json({ message });
+};
+
 // Get dashboard page
 router.get('/', withAuth, async (req, res) => {
     try {
+        // Ensure the user is logged in
+        if (!req.session || !req.session.userId) {
+            return errorResponse(res, 401, 'Unauthorized: No session or user ID found');
+        }
+
         // Fetch posts specific to the logged-in user
         const userPosts = await Post.findAll({
-            where: {
-                userId: req.session.userId // Assuming the session contains the user's ID
-            },
+            where: { userId: req.session.userId },
             include: [
                 {
                     model: User,
@@ -17,7 +25,7 @@ router.get('/', withAuth, async (req, res) => {
                 },
                 {
                     model: Comment,
-                    attributes: ['content', 'createdAt'], // Assuming the field is 'content'
+                    attributes: ['content', 'createdAt'],
                     include: {
                         model: User,
                         attributes: ['username']
@@ -32,11 +40,10 @@ router.get('/', withAuth, async (req, res) => {
         // Render the dashboard page with the user's posts
         res.render('dashboard', { // Replace 'dashboard' with your actual dashboard view file
             posts,
-            loggedIn: req.session.loggedIn // Assuming you track login status in the session
+            loggedIn: req.session.loggedIn
         });
     } catch (err) {
-        // Handle errors and respond with an error message
-        res.status(500).send(err);
+        errorResponse(res, 500, 'Failed to retrieve dashboard data');
     }
 });
 

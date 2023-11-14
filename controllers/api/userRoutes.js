@@ -2,10 +2,20 @@ const router = require('express').Router();
 const { User } = require('../../models');
 const bcrypt = require('bcrypt');
 
+// Helper function for standardized error response
+const errorResponse = (res, statusCode, message) => {
+    return res.status(statusCode).json({ message });
+};
+
 // Route to register a new user
 router.post('/signup', async (req, res) => {
     try {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10); // Hashing the password
+        // Basic data validation
+        if (!req.body.username || !req.body.password) {
+            return errorResponse(res, 400, 'Username and password are required');
+        }
+
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const newUser = await User.create({
             username: req.body.username,
             password: hashedPassword,
@@ -16,10 +26,10 @@ router.post('/signup', async (req, res) => {
             req.session.username = newUser.username;
             req.session.loggedIn = true;
 
-            res.status(200).json(newUser);
+            res.status(200).json({ user: newUser, message: 'Registration successful' });
         });
     } catch (err) {
-        res.status(500).json(err);
+        errorResponse(res, 500, 'Failed to register user');
     }
 });
 
@@ -28,14 +38,12 @@ router.post('/login', async (req, res) => {
     try {
         const userData = await User.findOne({ where: { username: req.body.username } });
         if (!userData) {
-            res.status(400).json({ message: 'Incorrect username or password, please try again' });
-            return;
+            return errorResponse(res, 400, 'Incorrect username or password, please try again');
         }
 
         const validPassword = await bcrypt.compare(req.body.password, userData.password);
         if (!validPassword) {
-            res.status(400).json({ message: 'Incorrect username or password, please try again' });
-            return;
+            return errorResponse(res, 400, 'Incorrect username or password, please try again');
         }
 
         req.session.save(() => {
@@ -46,7 +54,7 @@ router.post('/login', async (req, res) => {
             res.status(200).json({ user: userData, message: 'You are now logged in!' });
         });
     } catch (err) {
-        res.status(500).json(err);
+        errorResponse(res, 500, 'Failed to login');
     }
 });
 
@@ -56,7 +64,7 @@ router.get('/', async (req, res) => {
         const userData = await User.findAll();
         res.status(200).json(userData);
     } catch (err) {
-        res.status(500).json(err);
+        errorResponse(res, 500, 'Failed to retrieve users');
     }
 });
 
@@ -64,17 +72,15 @@ router.get('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
         const userData = await User.update(req.body, {
-            where: {
-                id: req.params.id
-            }
+            where: { id: req.params.id }
         });
-        if (!userData) {
-            res.status(404).json({ message: 'No user found with this id!' });
-            return;
+
+        if (userData[0] === 0) {
+            return errorResponse(res, 404, 'No user found with this id');
         }
-        res.status(200).json(userData);
+        res.json({ message: 'User updated successfully' });
     } catch (err) {
-        res.status(500).json(err);
+        errorResponse(res, 500, 'Failed to update user');
     }
 });
 
@@ -82,17 +88,15 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try {
         const userData = await User.destroy({
-            where: {
-                id: req.params.id
-            }
+            where: { id: req.params.id }
         });
+
         if (!userData) {
-            res.status(404).json({ message: 'No user found with this id!' });
-            return;
+            return errorResponse(res, 404, 'No user found with this id');
         }
-        res.status(200).json(userData);
+        res.json({ message: 'User deleted successfully' });
     } catch (err) {
-        res.status(500).json(err);
+        errorResponse(res, 500, 'Failed to delete user');
     }
 });
 

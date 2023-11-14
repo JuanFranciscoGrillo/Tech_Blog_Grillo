@@ -1,6 +1,11 @@
 const router = require('express').Router();
 const { Post, User, Comment } = require('../models');
 
+// Helper function for standardized error response
+const errorResponse = (res, statusCode, message) => {
+    return res.status(statusCode).json({ message });
+};
+
 // Get home page
 router.get('/', async (req, res) => {
     try {
@@ -13,7 +18,7 @@ router.get('/', async (req, res) => {
                 },
                 {
                     model: Comment,
-                    attributes: ['content', 'createdAt'], // Assuming the field is 'content'
+                    attributes: ['content', 'createdAt'],
                     include: {
                         model: User,
                         attributes: ['username']
@@ -24,15 +29,15 @@ router.get('/', async (req, res) => {
         });
 
         // Serialize data so the template can read it
-        const posts = postData.map((post) => post.get({ plain: true }));
+        const posts = postData.map(post => post.get({ plain: true }));
 
         // Pass serialized data and session flag into template
         res.render('homepage', { 
             posts, 
-            loggedIn: req.session ? req.session.loggedIn : false // Check if session exists and if user is logged in
+            loggedIn: req.session ? req.session.loggedIn : false 
         });
     } catch (err) {
-        res.status(500).json(err);
+        errorResponse(res, 500, 'Failed to retrieve home page data');
     }
 });
 

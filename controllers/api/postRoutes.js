@@ -2,16 +2,26 @@ const router = require('express').Router();
 const { Post } = require('../../models');
 const withAuth = require('../../utils/auth'); // Middleware for authentication
 
+// Helper function for standardized error response
+const errorResponse = (res, statusCode, message) => {
+    return res.status(statusCode).json({ message });
+};
+
 // POST route to create a new post
 router.post('/', withAuth, async (req, res) => {
     try {
+        // Basic data validation
+        if (!req.body.title || !req.body.content) {
+            return errorResponse(res, 400, 'Title and content are required');
+        }
+
         const newPost = await Post.create({
             ...req.body,
-            userId: req.session.userId, // Assuming the user ID is stored in the session
+            userId: req.session.userId,
         });
         res.status(200).json(newPost);
     } catch (err) {
-        res.status(400).json(err);
+        errorResponse(res, 400, 'Failed to create post');
     }
 });
 
@@ -21,16 +31,16 @@ router.put('/:id', withAuth, async (req, res) => {
         const [affectedRows] = await Post.update(req.body, {
             where: {
                 id: req.params.id,
-                userId: req.session.userId, // Ensuring users can only update their posts
+                userId: req.session.userId,
             },
         });
+
         if (affectedRows === 0) {
-            res.status(404).json({ message: 'No post found with this id!' });
-            return;
+            return errorResponse(res, 404, 'No post found with this id or unauthorized');
         }
         res.json({ message: 'Post updated successfully' });
     } catch (err) {
-        res.status(500).json(err);
+        errorResponse(res, 500, 'Failed to update post');
     }
 });
 
@@ -40,16 +50,16 @@ router.delete('/:id', withAuth, async (req, res) => {
         const deletedRows = await Post.destroy({
             where: {
                 id: req.params.id,
-                userId: req.session.userId, // Ensuring users can only delete their posts
+                userId: req.session.userId,
             },
         });
+
         if (deletedRows === 0) {
-            res.status(404).json({ message: 'No post found with this id!' });
-            return;
+            return errorResponse(res, 404, 'No post found with this id or unauthorized');
         }
         res.json({ message: 'Post deleted successfully' });
     } catch (err) {
-        res.status(500).json(err);
+        errorResponse(res, 500, 'Failed to delete post');
     }
 });
 
@@ -59,7 +69,7 @@ router.get('/', async (req, res) => {
         const postData = await Post.findAll();
         res.status(200).json(postData);
     } catch (err) {
-        res.status(500).json(err);
+        errorResponse(res, 500, 'Failed to retrieve posts');
     }
 });
 

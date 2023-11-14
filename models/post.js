@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      // Define association here
       Post.belongsTo(models.User, {
         foreignKey: 'userId',
         onDelete: 'CASCADE'
@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
 
       Post.hasMany(models.Comment, {
         foreignKey: 'postId',
+        as: 'comments', // Optional: specify an alias for the association
         onDelete: 'CASCADE'
       });
     }
@@ -34,18 +35,26 @@ module.exports = (sequelize, DataTypes) => {
     },
     title: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        notEmpty: true, // Ensures the title is not empty
+        len: [1, 255] // Adjust length as needed
+      }
     },
     content: {
       type: DataTypes.TEXT,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        notEmpty: true // Ensures the content is not empty
+      }
     },
     userId: {
       type: DataTypes.INTEGER,
       references: {
-        model: 'user',
+        model: 'User', // Ensure this matches the table name exactly
         key: 'id'
-      }
+      },
+      onDelete: 'CASCADE' // Optional: Ensure referential integrity
     }
   }, {
     sequelize,
