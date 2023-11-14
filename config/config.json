@@ -4,20 +4,19 @@
     "password": "hello",
     "database": "tech_blog_Grillo",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "port": 3306
   },
   "test": {
     "username": "root",
     "password": "hello",
-    "database": "tech_blog_Grillo",
+    "database": "tech_blog_Grillo_test",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "port": 3306
   },
   "production": {
-    "username": "root",
-    "password": "hello",
-    "database": "tech_blog_Grillo",
-    "host": "127.0.0.1",
+    "use_env_variable": "JAWSDB_URL",
     "dialect": "mysql"
   }
 }
