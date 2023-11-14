@@ -2,16 +2,26 @@ const router = require('express').Router();
 const { Comment } = require('../../models');
 const withAuth = require('../../utils/auth'); // Middleware for authentication
 
+// Helper function for standardized error response
+const errorResponse = (res, statusCode, message) => {
+    return res.status(statusCode).json({ message });
+};
+
 // Route to create a new comment
 router.post('/', withAuth, async (req, res) => {
     try {
+        // Data validation (simple example)
+        if (!req.body.text) {
+            return errorResponse(res, 400, 'Comment text is required');
+        }
+
         const newComment = await Comment.create({
             ...req.body,
             userId: req.session.userId,
         });
         res.json(newComment);
     } catch (err) {
-        res.status(400).json(err);
+        errorResponse(res, 400, err.toString());
     }
 });
 
@@ -21,7 +31,7 @@ router.get('/', async (req, res) => {
         const commentData = await Comment.findAll();
         res.status(200).json(commentData);
     } catch (err) {
-        res.status(500).json(err);
+        errorResponse(res, 500, 'Failed to retrieve comments');
     }
 });
 
@@ -34,13 +44,13 @@ router.put('/:id', withAuth, async (req, res) => {
                 userId: req.session.userId // Assuming comments can only be edited by their authors
             }
         });
+
         if (commentData[0] === 0) {
-            res.status(404).json({ message: 'No comment found with this id!' });
-            return;
+            return errorResponse(res, 404, 'No comment found with this id or unauthorized');
         }
-        res.json(commentData);
+        res.json({ message: 'Comment updated successfully' });
     } catch (err) {
-        res.status(500).json(err);
+        errorResponse(res, 500, 'Failed to update comment');
     }
 });
 
@@ -53,13 +63,13 @@ router.delete('/:id', withAuth, async (req, res) => {
                 userId: req.session.userId // Assuming comments can only be deleted by their authors
             }
         });
+
         if (!commentData) {
-            res.status(404).json({ message: 'No comment found with this id!' });
-            return;
+            return errorResponse(res, 404, 'No comment found with this id or unauthorized');
         }
         res.json({ message: 'Comment deleted successfully' });
     } catch (err) {
-        res.status(500).json(err);
+        errorResponse(res, 500, 'Failed to delete comment');
     }
 });
 
