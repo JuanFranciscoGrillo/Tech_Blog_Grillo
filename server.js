@@ -5,6 +5,7 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const morgan = require('morgan'); // For logging
 require('dotenv').config(); // For loading environment variables
 
+// Importing Sequelize instance from the connection configuration
 const sequelize = require('./config/connection');
 const helpers = require('./utils/helpers');
 
@@ -26,7 +27,7 @@ app.use(express.static('public'));
 
 // Set up session with Sequelize store
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'Super secret secret', // Use environment variable for the secret
+  secret: process.env.SESSION_SECRET || 'Super secret secret',
   cookie: {
     maxAge: 3600000, // 1 hour for example
     httpOnly: true
@@ -57,4 +58,3 @@ app.use((req, res, next) => {
 sequelize.sync({ force: false }).then(() => {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 });
-
