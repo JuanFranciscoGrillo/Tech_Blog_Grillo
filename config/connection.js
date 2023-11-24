@@ -27,11 +27,13 @@ if (process.env.JAWSDB_URL) {
   const username = process.env.DB_USER || DEFAULT_USERNAME;
   const password = process.env.DB_PASSWORD || DEFAULT_PASSWORD;
 
-  // Sequelize initialization for local configuration
+  // Sequelize initialization for local configuration with logging disabled
   sequelize = new Sequelize(database, username, password, {
     host,
     dialect: 'mysql',
     port,
+    logging: false, // Disable logging
+    // other options...
   });
 }
 
