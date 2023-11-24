@@ -5,7 +5,8 @@
     "database": "tech_blog_Grillo",
     "host": "127.0.0.1",
     "dialect": "mysql",
-    "port": 3306
+    "port": 3306,
+    "logging": "false"
   },
   "test": {
     "username": "root",
@@ -13,7 +14,8 @@
     "database": "tech_blog_Grillo",
     "host": "127.0.0.1",
     "dialect": "mysql",
-    "port": 3306
+    "port": 3306,
+    "logging": "false"
   },
   "production": {
     "use_env_variable": "JAWSDB_URL",
