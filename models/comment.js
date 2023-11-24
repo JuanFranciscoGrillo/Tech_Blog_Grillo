@@ -1,9 +1,9 @@
 'use strict';
-const {
-  Model,
-  DataTypes
-} = require('sequelize');
 
+// Import necessary Sequelize modules
+const { Model, DataTypes } = require('sequelize');
+
+// Define and export the Comment model
 module.exports = (sequelize, DataTypes) => {
   class Comment extends Model {
     /**
@@ -13,11 +13,13 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // Define association here
+      // Associate Comment with User model using foreign key 'userId'
       Comment.belongsTo(models.User, {
         foreignKey: 'userId',
         onDelete: 'CASCADE'
       });
 
+      // Associate Comment with Post model using foreign key 'postId'
       Comment.belongsTo(models.Post, {
         foreignKey: 'postId',
         onDelete: 'CASCADE'
@@ -25,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
 
+  // Initialize the Comment model with its attributes and data types
   Comment.init({
     // Model attributes are defined here
     id: {

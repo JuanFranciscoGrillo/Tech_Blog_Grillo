@@ -1,25 +1,23 @@
+// seeders/202311140003-comment.js
+
 'use strict';
 
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
-    /**
-     * Add seed commands here.
-     *
-     * Example:
-     * await queryInterface.bulkInsert('People', [{
-     *   name: 'John Doe',
-     *   isBetaMember: false
-     * }], {});
-    */
+  async up(queryInterface, Sequelize) {
+    // Seed the 'Comments' table with a sample comment
+    await queryInterface.bulkInsert('Comments', [
+      {
+        content: 'This is a sample comment.',
+        userId: 1, // Assuming this user ID exists
+        postId: 1, // Assuming this post ID exists
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ], {});
   },
 
-  async down (queryInterface, Sequelize) {
-    /**
-     * Add commands to revert seed here.
-     *
-     * Example:
-     * await queryInterface.bulkDelete('People', null, {});
-     */
-  }
+  async down(queryInterface, Sequelize) {
+    // Remove all records from the 'Comments' table
+    await queryInterface.bulkDelete('Comments', null, {});
+  },
 };

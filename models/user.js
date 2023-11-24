@@ -1,17 +1,17 @@
 'use strict';
-const {
-  Model,
-  DataTypes
-} = require('sequelize');
+
+// Import necessary Sequelize modules
+const { Model, DataTypes } = require('sequelize');
 const bcrypt = require('bcrypt');
 
+// Define and export the User model
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
      * Check password method
      */
     checkPassword(loginPw) {
-        return bcrypt.compareSync(loginPw, this.password);
+      return bcrypt.compareSync(loginPw, this.password);
     }
 
     /**
@@ -21,11 +21,13 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // Define association here
+      // Associate User with Post model using foreign key 'userId'
       User.hasMany(models.Post, {
         foreignKey: 'userId',
         onDelete: 'CASCADE'
       });
 
+      // Associate User with Comment model using foreign key 'userId'
       User.hasMany(models.Comment, {
         foreignKey: 'userId',
         onDelete: 'CASCADE'
@@ -33,6 +35,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
 
+  // Initialize the User model with its attributes and data types
   User.init({
     // Model attributes are defined here
     id: {

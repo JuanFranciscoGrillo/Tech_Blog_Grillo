@@ -158,8 +158,7 @@
     "semver": "^7.5.4",
     "send": "^0.18.0",
     "seq-queue": "^0.0.5",
-    "sequelize": "^6.35.0",
-    "sequelize-cli": "^6.6.2",
+    "sequelize": "^6.35.1",
     "sequelize-pool": "^7.1.0",
     "serve-static": "^1.15.0",
     "set-blocking": "^2.0.0",
@@ -216,5 +215,8 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "sequelize-cli": "^6.6.2"
+  }
 }
