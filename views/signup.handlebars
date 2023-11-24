@@ -1,14 +1,14 @@
-{{!-- Extend the main layout --}}
-{{#extend "main"}}
+{{! Extend the main layout }}
+{{#extend 'main'}}
 
-{{#content "body"}}
+  {{#content 'body'}}
     <h1>Sign Up</h1>
-    <form action="/api/users/signup" method="POST">
-        <input type="text" name="username" placeholder="Username" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <button type="submit">Sign Up</button>
+    <form action='/api/users/signup' method='POST'>
+      <input type='text' name='username' placeholder='Username' required />
+      <input type='password' name='password' placeholder='Password' required />
+      <button type='submit'>Sign Up</button>
     </form>
-    <p>Already have an account? <a href="/login">Login</a></p>
-{{/content}}
+    <p>Already have an account? <a href='/login'>Login</a></p>
+  {{/content}}
 
 {{/extend}}

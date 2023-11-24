@@ -16,53 +16,56 @@ module.exports = (sequelize, DataTypes) => {
       // Associate Comment with User model using foreign key 'userId'
       Comment.belongsTo(models.User, {
         foreignKey: 'userId',
-        onDelete: 'CASCADE'
+        onDelete: 'CASCADE',
       });
 
       // Associate Comment with Post model using foreign key 'postId'
       Comment.belongsTo(models.Post, {
         foreignKey: 'postId',
-        onDelete: 'CASCADE'
+        onDelete: 'CASCADE',
       });
     }
   }
 
   // Initialize the Comment model with its attributes and data types
-  Comment.init({
-    // Model attributes are defined here
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true
-    },
-    commentText: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        len: [1, 300] // Adjust the length according to your needs
-      }
-    },
-    userId: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: 'User', // Ensure this matches the table name exactly
-        key: 'id'
+  Comment.init(
+    {
+      // Model attributes are defined here
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
       },
-      onDelete: 'CASCADE' // Optional: Ensure referential integrity
-    },
-    postId: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: 'Post', // Ensure this matches the table name exactly
-        key: 'id'
+      commentText: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          len: [1, 300], // Adjust the length according to your needs
+        },
       },
-      onDelete: 'CASCADE' // Optional: Ensure referential integrity
+      userId: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: 'User', // Ensure this matches the table name exactly
+          key: 'id',
+        },
+        onDelete: 'CASCADE', // Optional: Ensure referential integrity
+      },
+      postId: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: 'Post', // Ensure this matches the table name exactly
+          key: 'id',
+        },
+        onDelete: 'CASCADE', // Optional: Ensure referential integrity
+      },
+    },
+    {
+      sequelize,
+      modelName: 'Comment',
+      timestamps: true,
     }
-  }, {
-    sequelize,
-    modelName: 'Comment',
-    timestamps: true
-  });
+  );
 
   return Comment;
 };

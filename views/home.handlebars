@@ -1,19 +1,22 @@
-{{!-- Extend the main layout --}}
-{{#extend "main"}}
+{{! Extend the main layout }}
+{{#extend 'main'}}
 
-{{#content "body"}}
+  {{#content 'body'}}
     <h1>Welcome to the Tech Blog</h1>
     <section>
-        {{#each posts as |post|}}
-            <article>
-                <h2><a href="/post/{{post.id}}">{{post.title}}</a></h2>
-                <p>{{post.content}}</p>
-                <p>Posted by {{post.User.username}} on {{format_date post.createdAt}}</p>
-            </article>
-        {{else}}
-            <p>No posts available.</p>
-        {{/each}}
+      {{#each posts as |post|}}
+        <article>
+          <h2><a href='/post/{{post.id}}'>{{post.title}}</a></h2>
+          <p>{{post.content}}</p>
+          <p>Posted by
+            {{post.User.username}}
+            on
+            {{format_date post.createdAt}}</p>
+        </article>
+      {{else}}
+        <p>No posts available.</p>
+      {{/each}}
     </section>
-{{/content}}
+  {{/content}}
 
 {{/extend}}

@@ -2,7 +2,6 @@ const express = require('express');
 const session = require('express-session');
 const exphbs = require('express-handlebars');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
-const morgan = require('morgan'); // For logging
 require('dotenv').config(); // For loading environment variables
 
 // Importing Sequelize instance from the connection configuration
@@ -17,27 +16,26 @@ const hbs = exphbs.create({ helpers });
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
-// Middleware for logging
-app.use(morgan('dev'));
-
 // Middleware for parsing JSON and urlencoded form data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 // Set up session with Sequelize store
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'Super secret secret',
-  cookie: {
-    maxAge: 3600000, // 1 hour for example
-    httpOnly: true
-  },
-  resave: false,
-  saveUninitialized: true,
-  store: new SequelizeStore({
-    db: sequelize
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'Super secret secret',
+    cookie: {
+      maxAge: 3600000, // 1 hour for example
+      httpOnly: true,
+    },
+    resave: false,
+    saveUninitialized: true,
+    store: new SequelizeStore({
+      db: sequelize,
+    }),
   })
-}));
+);
 
 // Import routes
 const homeRoutes = require('./controllers/homeRoutes');

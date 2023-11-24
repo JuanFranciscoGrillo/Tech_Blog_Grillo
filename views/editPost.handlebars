@@ -3,7 +3,7 @@
 
 {{#content "body"}}
     <h1>{{#if post}}Edit{{else}}Create{{/if}} Post</h1>
-    <form action="{{#if post}}/api/posts/update/{{post.id}}{{else}}/api/posts/create{{/if}}" method="POST">
+    <form action="{{#if post}}{{else}}/api/posts/create{{/if}}{{#if post}}/api/posts/update/{{post.id}}{{/if}}" method="POST">
         <input type="text" name="title" placeholder="Title" required value="{{post.title}}">
         <textarea name="content" placeholder="Content" required>{{post.content}}</textarea>
         <button type="submit">{{#if post}}Update{{else}}Create{{/if}} Post</button>
