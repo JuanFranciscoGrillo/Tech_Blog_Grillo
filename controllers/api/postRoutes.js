@@ -1,18 +1,17 @@
+/* eslint-disable prettier/prettier */
+// eslint-disable-next-line new-cap
 const router = require('express').Router();
 const { Post } = require('../../models');
-const withAuth = require('../../utils/auth'); // Middleware for authentication
+const withAuth = require('../../utils/auth');
 
-// Helper function for standardized error response
-const errorResponse = (res, statusCode, message) => {
-  return res.status(statusCode).json({ message });
-};
-
-// POST route to create a new post
+// Create a new post
 router.post('/', withAuth, async (req, res) => {
   try {
-    // Basic data validation
-    if (!req.body.title || !req.body.content) {
-      return errorResponse(res, 400, 'Title and content are required');
+    const { title, content } = req.body;
+    if (!title || !content) {
+      return res
+        .status(400)
+        .json({ message: 'Title and content are required' });
     }
 
     const newPost = await Post.create({
@@ -21,11 +20,12 @@ router.post('/', withAuth, async (req, res) => {
     });
     res.status(200).json(newPost);
   } catch (err) {
-    errorResponse(res, 400, 'Failed to create post');
+    console.error('Error creating post: ', err);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
-// PUT route to update an existing post
+// Update an existing post
 router.put('/:id', withAuth, async (req, res) => {
   try {
     const [affectedRows] = await Post.update(req.body, {
@@ -36,19 +36,16 @@ router.put('/:id', withAuth, async (req, res) => {
     });
 
     if (affectedRows === 0) {
-      return errorResponse(
-        res,
-        404,
-        'No post found with this id or unauthorized'
-      );
+      return res.status(404).json({ message: 'No post found with this id or unauthorized' });
     }
-    res.json({ message: 'Post updated successfully' });
+    res.status(200).json({ message: 'Post updated successfully' });
   } catch (err) {
-    errorResponse(res, 500, 'Failed to update post');
+    console.error('Error updating post: ', err);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
-// DELETE route to delete a post
+// Delete a post
 router.delete('/:id', withAuth, async (req, res) => {
   try {
     const deletedRows = await Post.destroy({
@@ -59,25 +56,23 @@ router.delete('/:id', withAuth, async (req, res) => {
     });
 
     if (deletedRows === 0) {
-      return errorResponse(
-        res,
-        404,
-        'No post found with this id or unauthorized'
-      );
+      return res.status(404).json({ message: 'No post found with this id or unauthorized' });
     }
-    res.json({ message: 'Post deleted successfully' });
+    res.status(200).json({ message: 'Post deleted successfully' });
   } catch (err) {
-    errorResponse(res, 500, 'Failed to delete post');
+    console.error('Error deleting post: ', err);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
-// GET route to read all posts
+// Get all posts
 router.get('/', async (req, res) => {
   try {
     const postData = await Post.findAll();
     res.status(200).json(postData);
   } catch (err) {
-    errorResponse(res, 500, 'Failed to retrieve posts');
+    console.error('Error retrieving posts: ', err);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 

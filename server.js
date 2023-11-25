@@ -2,11 +2,10 @@ const express = require('express');
 const session = require('express-session');
 const exphbs = require('express-handlebars');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
-require('dotenv').config(); // For loading environment variables
 
-// Importing Sequelize instance and helpers
-const sequelize = require('./config/connection');
-const helpers = require('./utils/helpers');
+const sequelize = require('./config/connection'); // Adjust the path as needed
+const helpers = require('./utils/helpers'); // Adjust the path as needed
+const apiRoutes = require('./controllers/api/index.js'); // Adjust the path as needed
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,13 +20,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-// Set up session with Sequelize store and cookie configuration
+// Set up session with Sequelize store
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || 'default_secret',
+    secret: 'Super secret secret', // Replace with an environment variable in production
     cookie: {
       maxAge: 3600000, // 1 hour for example
-      httpOnly: true,
     },
     resave: false,
     saveUninitialized: true,
@@ -37,25 +35,15 @@ app.use(
   })
 );
 
-// Import and use routes from the central controllers directory
-const routes = require('./controllers');
-app.use(routes);
+// Use API routes
+app.use('/api', apiRoutes);
 
 // Global error handling for unhandled routes
-app.use((req, res, next) => {
+app.use((req, res) => {
   res.status(404).send("Sorry, can't find that!");
 });
 
-// Sync sequelize models to the database, then start the server with error handling
-sequelize
-  .sync({ force: false })
-  .then(() => {
-    app.listen(PORT, () =>
-      console.log(`Server is running on http://localhost:${PORT}`)
-    );
-  })
-  .catch((err) => {
-    console.error('Unable to connect to the database:', err);
-  });
-
-module.exports = app;
+// Start the server and sync the database
+sequelize.sync({ force: false }).then(() => {
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+});

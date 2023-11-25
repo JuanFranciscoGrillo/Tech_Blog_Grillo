@@ -1,3 +1,4 @@
+/* eslint-disable require-jsdoc */
 function withAuth(req, res, next) {
   // If the user is not logged in, redirect them to the login page
   if (!req.session.loggedIn) {

@@ -1,23 +1,22 @@
+// eslint-disable-next-line new-cap
 const router = require('express').Router();
 const { User } = require('../../models');
 const bcrypt = require('bcrypt');
+const withAuth = require('../../utils/auth');
 
-// Helper function for standardized error response
-const errorResponse = (res, statusCode, message) => {
-  return res.status(statusCode).json({ message });
-};
-
-// Route to register a new user
+// Register a new user
 router.post('/signup', async (req, res) => {
   try {
-    // Basic data validation
-    if (!req.body.username || !req.body.password) {
-      return errorResponse(res, 400, 'Username and password are required');
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res
+        .status(400)
+        .json({ message: 'Username and password are required' });
     }
 
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await User.create({
-      username: req.body.username,
+      username,
       password: hashedPassword,
     });
 
@@ -31,34 +30,33 @@ router.post('/signup', async (req, res) => {
         .json({ user: newUser, message: 'Registration successful' });
     });
   } catch (err) {
-    errorResponse(res, 500, 'Failed to register user');
+    console.error('Error during user signup: ', err);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
-// Route for user login
+// User login
 router.post('/login', async (req, res) => {
   try {
-    const userData = await User.findOne({
-      where: { username: req.body.username },
-    });
-    if (!userData) {
-      return errorResponse(
-        res,
-        400,
-        'Incorrect username or password, please try again'
-      );
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res
+        .status(400)
+        .json({ message: 'Username and password are required' });
     }
 
-    const validPassword = await bcrypt.compare(
-      req.body.password,
-      userData.password
-    );
+    const userData = await User.findOne({ where: { username } });
+    if (!userData) {
+      return res
+        .status(400)
+        .json({ message: 'Incorrect username or password' });
+    }
+
+    const validPassword = await bcrypt.compare(password, userData.password);
     if (!validPassword) {
-      return errorResponse(
-        res,
-        400,
-        'Incorrect username or password, please try again'
-      );
+      return res
+        .status(400)
+        .json({ message: 'Incorrect username or password' });
     }
 
     req.session.save(() => {
@@ -71,49 +69,53 @@ router.post('/login', async (req, res) => {
         .json({ user: userData, message: 'You are now logged in!' });
     });
   } catch (err) {
-    errorResponse(res, 500, 'Failed to login');
+    console.error('Error during user login: ', err);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
-// Read operation - Get all users
+// Get all users
 router.get('/', async (req, res) => {
   try {
     const userData = await User.findAll();
     res.status(200).json(userData);
   } catch (err) {
-    errorResponse(res, 500, 'Failed to retrieve users');
+    console.error('Error fetching users: ', err);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
-// Update operation - Update a user
-router.put('/:id', async (req, res) => {
+// Update a user
+router.put('/:id', withAuth, async (req, res) => {
   try {
     const userData = await User.update(req.body, {
       where: { id: req.params.id },
     });
 
     if (userData[0] === 0) {
-      return errorResponse(res, 404, 'No user found with this id');
+      return res.status(404).json({ message: 'No user found with this id' });
     }
-    res.json({ message: 'User updated successfully' });
+    res.status(200).json({ message: 'User updated successfully' });
   } catch (err) {
-    errorResponse(res, 500, 'Failed to update user');
+    console.error('Error updating user: ', err);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
-// Delete operation - Delete a user
-router.delete('/:id', async (req, res) => {
+// Delete a user
+router.delete('/:id', withAuth, async (req, res) => {
   try {
     const userData = await User.destroy({
       where: { id: req.params.id },
     });
 
     if (!userData) {
-      return errorResponse(res, 404, 'No user found with this id');
+      return res.status(404).json({ message: 'No user found with this id' });
     }
-    res.json({ message: 'User deleted successfully' });
+    res.status(200).json({ message: 'User deleted successfully' });
   } catch (err) {
-    errorResponse(res, 500, 'Failed to delete user');
+    console.error('Error deleting user: ', err);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 

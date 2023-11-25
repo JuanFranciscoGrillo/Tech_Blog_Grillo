@@ -1,13 +1,14 @@
-const express = require('express');
-const router = express.Router();
+// eslint-disable-next-line new-cap
+const router = require('express').Router();
 
-// Import individual route controllers
-const homeRoutes = require('./homeRoutes');
-const dashboardRoutes = require('./dashboardRoutes');
+// Import individual route files
+const userRoutes = require('./userRoutes');
+const postRoutes = require('./postRoutes');
+const commentRoutes = require('./commentRoutes');
 
-// Use the imported route controllers
-router.use('/', homeRoutes);
-router.use('/dashboard', dashboardRoutes);
+// Set up routes with their respective base paths
+router.use('/users', userRoutes);
+router.use('/posts', postRoutes);
+router.use('/comments', commentRoutes);
 
-// Export the main router
 module.exports = router;

@@ -1,84 +1,80 @@
 // eslint-disable-next-line new-cap
 const router = require('express').Router();
 const { Comment } = require('../../models');
-const withAuth = require('../../utils/auth'); // Middleware for authentication
+const withAuth = require('../../utils/auth');
 
-// Helper function for standardized error response
-const errorResponse = (res, statusCode, message) => {
-  return res.status(statusCode).json({ message });
-};
-
-// Route to create a new comment
+// Create a new comment
 router.post('/', withAuth, async (req, res) => {
   try {
-    // Data validation (simple example)
-    if (!req.body.text) {
-      return errorResponse(res, 400, 'Comment text is required');
+    const { text } = req.body;
+    if (!text) {
+      return res.status(400).json({ message: 'Comment text is required' });
     }
 
     const newComment = await Comment.create({
-      ...req.body,
+      text,
       userId: req.session.userId,
+      // Add other necessary fields from req.body if needed
     });
-    res.json(newComment);
+    res.status(200).json(newComment);
   } catch (err) {
-    errorResponse(res, 400, err.toString());
+    console.error('Error creating comment: ', err);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
-// Read operation - Get all comments
+// Get all comments
 router.get('/', async (req, res) => {
   try {
     const commentData = await Comment.findAll();
     res.status(200).json(commentData);
   } catch (err) {
-    errorResponse(res, 500, 'Failed to retrieve comments');
+    console.error('Error retrieving comments: ', err);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
-// Update operation - Update a comment
+// Update a comment
 router.put('/:id', withAuth, async (req, res) => {
   try {
     const commentData = await Comment.update(req.body, {
       where: {
         id: req.params.id,
-        userId: req.session.userId, // Assuming comments can only be edited by their authors
+        userId: req.session.userId,
       },
     });
 
     if (commentData[0] === 0) {
-      return errorResponse(
-        res,
-        404,
-        'No comment found with this id or unauthorized'
-      );
+      return res
+        .status(404)
+        .json({ message: 'No comment found with this id or unauthorized' });
     }
-    res.json({ message: 'Comment updated successfully' });
+    res.status(200).json({ message: 'Comment updated successfully' });
   } catch (err) {
-    errorResponse(res, 500, 'Failed to update comment');
+    console.error('Error updating comment: ', err);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
-// Delete operation - Delete a comment
+// Delete a comment
 router.delete('/:id', withAuth, async (req, res) => {
   try {
     const commentData = await Comment.destroy({
       where: {
         id: req.params.id,
-        userId: req.session.userId, // Assuming comments can only be deleted by their authors
+        userId: req.session.userId,
       },
     });
 
     if (!commentData) {
-      return errorResponse(
-        res,
-        404,
-        'No comment found with this id or unauthorized'
-      );
+      return res
+        .status(404)
+        .json({ message: 'No comment found with this id or unauthorized' });
     }
-    res.json({ message: 'Comment deleted successfully' });
+    res.status(200).json({ message: 'Comment deleted successfully' });
   } catch (err) {
-    errorResponse(res, 500, 'Failed to delete comment');
+    console.error('Error deleting comment: ', err);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
