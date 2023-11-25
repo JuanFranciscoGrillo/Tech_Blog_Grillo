@@ -1,11 +1,13 @@
 'use strict';
 
 // Import necessary Sequelize modules
-const { Model, DataTypes } = require('sequelize');
+const { Model } = require('sequelize');
 
 // Define and export the Post model
 module.exports = (sequelize, DataTypes) => {
+  // eslint-disable-next-line require-jsdoc
   class Post extends Model {
+    // eslint-disable-next-line valid-jsdoc
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.

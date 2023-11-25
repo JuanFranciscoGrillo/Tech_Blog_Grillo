@@ -11,7 +11,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Set up Handlebars.js engine with custom helpers
-const hbs = exphbs.create({ helpers });
+const hbs = exphbs.create({ 
+  helpers: require('./utils/helpers'), // Ensure custom helpers are included
+  defaultLayout: 'main' // Set the default layout
+});
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
@@ -40,7 +43,7 @@ app.use('/api', apiRoutes);
 
 // Route for rendering the home view
 app.get('/', (req, res) => {
-    res.render('home', { currentDate: new Date().toDateString() });
+  res.render('home', { currentDate: new Date().toDateString() });
 });
 
 // Global error handling for unhandled routes
