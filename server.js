@@ -4,7 +4,7 @@ const exphbs = require('express-handlebars');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 require('dotenv').config(); // For loading environment variables
 
-// Importing Sequelize instance from the connection configuration
+// Importing Sequelize instance and helpers
 const sequelize = require('./config/connection');
 const helpers = require('./utils/helpers');
 
@@ -21,10 +21,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-// Set up session with Sequelize store
+// Set up session with Sequelize store and cookie configuration
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || 'Super secret secret',
+    secret: process.env.SESSION_SECRET || 'default_secret',
     cookie: {
       maxAge: 3600000, // 1 hour for example
       httpOnly: true,
@@ -37,22 +37,25 @@ app.use(
   })
 );
 
-// Import routes
-const homeRoutes = require('./controllers/homeRoutes');
-const dashboardRoutes = require('./controllers/dashboardRoutes');
-const apiRoutes = require('./controllers/api');
-
-// Use routes
-app.use('/', homeRoutes);
-app.use('/dashboard', dashboardRoutes);
-app.use('/api', apiRoutes);
+// Import and use routes from the central controllers directory
+const routes = require('./controllers');
+app.use(routes);
 
 // Global error handling for unhandled routes
 app.use((req, res, next) => {
   res.status(404).send("Sorry, can't find that!");
 });
 
-// Start the server and sync the database
-sequelize.sync({ force: false }).then(() => {
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-});
+// Sync sequelize models to the database, then start the server with error handling
+sequelize
+  .sync({ force: false })
+  .then(() => {
+    app.listen(PORT, () =>
+      console.log(`Server is running on http://localhost:${PORT}`)
+    );
+  })
+  .catch((err) => {
+    console.error('Unable to connect to the database:', err);
+  });
+
+module.exports = app;

@@ -32,7 +32,7 @@ if (process.env.JAWSDB_URL) {
     host,
     dialect: 'mysql',
     port,
-    logging: false, // Disable logging
+    logging: true, // Disable logging
     // other options...
   });
 }
