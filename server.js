@@ -38,6 +38,11 @@ app.use(
 // Use API routes
 app.use('/api', apiRoutes);
 
+// Route for rendering the home view
+app.get('/', (req, res) => {
+    res.render('home', { currentDate: new Date().toDateString() });
+});
+
 // Global error handling for unhandled routes
 app.use((req, res) => {
   res.status(404).send("Sorry, can't find that!");
