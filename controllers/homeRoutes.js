@@ -32,7 +32,7 @@ router.get('/', async (req, res) => {
     const posts = postData.map((post) => post.get({ plain: true }));
 
     // Pass serialized data and session flag into template
-    res.render('homepage', {
+    res.render('home', { // Ensure this matches your Handlebars template file name
       posts,
       loggedIn: req.session ? req.session.loggedIn : false,
     });
