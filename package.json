@@ -54,7 +54,6 @@
     "depd": "^2.0.0",
     "destroy": "^1.2.0",
     "detect-libc": "^2.0.2",
-    "dotenv": "^16.3.1",
     "dottie": "^2.0.6",
     "eastasianwidth": "^0.2.0",
     "editorconfig": "^1.0.4",
@@ -219,6 +218,7 @@
     "yargs-parser": "^20.2.9"
   },
   "devDependencies": {
+    "dotenv": "^16.3.1",
     "eslint": "^8.54.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^9.0.0",

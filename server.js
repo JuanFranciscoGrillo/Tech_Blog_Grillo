@@ -4,7 +4,6 @@ const exphbs = require('express-handlebars');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 const sequelize = require('./config/connection'); // Adjust the path as needed
-const helpers = require('./utils/helpers'); // Adjust the path as needed
 const apiRoutes = require('./controllers/api'); // Adjust the path as needed
 const pageRoutes = require('./controllers/pageRoutes'); // Adjust the path as needed
 

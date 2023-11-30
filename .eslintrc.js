@@ -22,6 +22,6 @@ module.exports = {
   },
   rules: {
     // Your custom ESLint rules here
-    "linebreak-style": ["error", "unix"]
+    'linebreak-style': ['error', 'unix'],
   },
 };
