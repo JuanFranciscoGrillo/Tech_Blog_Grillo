@@ -5,15 +5,16 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 const sequelize = require('./config/connection'); // Adjust the path as needed
 const helpers = require('./utils/helpers'); // Adjust the path as needed
-const apiRoutes = require('./controllers/api/index.js'); // Adjust the path as needed
+const apiRoutes = require('./controllers/api'); // Adjust the path as needed
+const pageRoutes = require('./controllers/pageRoutes'); // Adjust the path as needed
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Set up Handlebars.js engine with custom helpers
-const hbs = exphbs.create({ 
+const hbs = exphbs.create({
   helpers: require('./utils/helpers'), // Ensure custom helpers are included
-  defaultLayout: 'main' // Set the default layout
+  defaultLayout: 'main', // Set the default layout
 });
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
@@ -41,10 +42,8 @@ app.use(
 // Use API routes
 app.use('/api', apiRoutes);
 
-// Route for rendering the home view
-app.get('/', (req, res) => {
-  res.render('home', { currentDate: new Date().toDateString() });
-});
+// Use page routes
+app.use('/', pageRoutes);
 
 // Global error handling for unhandled routes
 app.use((req, res) => {

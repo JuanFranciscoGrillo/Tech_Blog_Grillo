@@ -1,5 +1,7 @@
+// Import necessary modules
+// eslint-disable-next-line new-cap
 const router = require('express').Router();
-const { Post, User, Comment } = require('../models');
+const { Post, User, Comment } = require('../../models');
 
 // Helper function for standardized error response
 const errorResponse = (res, statusCode, message) => {
@@ -25,19 +27,20 @@ router.get('/', async (req, res) => {
           },
         },
       ],
-      order: [['createdAt', 'DESC']], // Optionally add order to sort the posts
+      order: [['createdAt', 'DESC']], // Sort the posts by creation date in descending order
     });
 
     // Serialize data so the template can read it
     const posts = postData.map((post) => post.get({ plain: true }));
 
     // Pass serialized data and session flag into template
-    res.render('home', { // Ensure this matches your Handlebars template file name
+    res.render('home', {
+      // Ensure this matches your Handlebars template file name
       posts,
-      loggedIn: req.session ? req.session.loggedIn : false,
+      loggedIn: req.session ? req.session.loggedIn : false, // Check if the user is logged in
     });
   } catch (err) {
-    errorResponse(res, 500, 'Failed to retrieve home page data');
+    errorResponse(res, 500, 'Failed to retrieve home page data'); // Handle error if failed to retrieve data
   }
 });
 

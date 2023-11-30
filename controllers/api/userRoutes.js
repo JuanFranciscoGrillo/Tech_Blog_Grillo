@@ -8,18 +8,24 @@ const withAuth = require('../../utils/auth');
 router.post('/signup', async (req, res) => {
   try {
     const { username, password } = req.body;
+
+    // Check if username and password are provided
     if (!username || !password) {
       return res
         .status(400)
         .json({ message: 'Username and password are required' });
     }
 
+    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create a new user
     const newUser = await User.create({
       username,
       password: hashedPassword,
     });
 
+    // Save user data in session
     req.session.save(() => {
       req.session.userId = newUser.id;
       req.session.username = newUser.username;
@@ -39,26 +45,35 @@ router.post('/signup', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
+
+    // Check if username and password are provided
     if (!username || !password) {
       return res
         .status(400)
         .json({ message: 'Username and password are required' });
     }
 
+    // Find user data by username
     const userData = await User.findOne({ where: { username } });
+
+    // Check if user exists
     if (!userData) {
       return res
         .status(400)
         .json({ message: 'Incorrect username or password' });
     }
 
+    // Compare passwords
     const validPassword = await bcrypt.compare(password, userData.password);
+
+    // Check if password is valid
     if (!validPassword) {
       return res
         .status(400)
         .json({ message: 'Incorrect username or password' });
     }
 
+    // Save user data in session
     req.session.save(() => {
       req.session.userId = userData.id;
       req.session.username = userData.username;
@@ -92,6 +107,7 @@ router.put('/:id', withAuth, async (req, res) => {
       where: { id: req.params.id },
     });
 
+    // Check if user was found and updated
     if (userData[0] === 0) {
       return res.status(404).json({ message: 'No user found with this id' });
     }
@@ -109,6 +125,7 @@ router.delete('/:id', withAuth, async (req, res) => {
       where: { id: req.params.id },
     });
 
+    // Check if user was found and deleted
     if (!userData) {
       return res.status(404).json({ message: 'No user found with this id' });
     }

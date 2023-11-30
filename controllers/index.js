@@ -1,14 +1,11 @@
-// eslint-disable-next-line new-cap
-const router = require('express').Router();
+// controllers/index.js
 
-// Import individual route files
-const userRoutes = require('./userRoutes');
-const postRoutes = require('./postRoutes');
-const commentRoutes = require('./commentRoutes');
+// Importing the required modules
+const api = require('./api');
+const pageRoutes = require('./pageRoutes');
 
-// Set up routes with their respective base paths
-router.use('/users', userRoutes);
-router.use('/posts', postRoutes);
-router.use('/comments', commentRoutes);
-
-module.exports = router;
+// Exporting the modules
+module.exports = {
+  api, // Exporting the api module
+  pageRoutes, // Exporting the pageRoutes module
+};
