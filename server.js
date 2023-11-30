@@ -1,3 +1,5 @@
+require('dotenv').config(); // Add this line at the top
+
 const express = require('express');
 const session = require('express-session');
 const exphbs = require('express-handlebars');
@@ -26,7 +28,7 @@ app.use(express.static('public'));
 // Set up session with Sequelize store
 app.use(
   session({
-    secret: 'Super secret secret', // Replace with an environment variable in production
+    secret: process.env.SESSION_SECRET, // Use environment variable for the secret
     cookie: {
       maxAge: 3600000, // 1 hour for example
     },
