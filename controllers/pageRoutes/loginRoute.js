@@ -1,7 +1,8 @@
+/* eslint-disable new-cap */
 const express = require('express');
 const router = express.Router(); // Create a router object
 
-// Add your route handlers here
+// Add route handlers
 router.get('/login', (req, res) => {
   // Check if user is already logged in
   if (req.session.loggedIn) {

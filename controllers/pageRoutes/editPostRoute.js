@@ -1,5 +1,5 @@
+/* eslint-disable new-cap */
 // Import necessary modules and dependencies
-// eslint-disable-next-line new-cap
 const router = require('express').Router();
 const { Post, User, Comment } = require('../../models');
 const withAuth = require('../../utils/auth');
@@ -24,7 +24,7 @@ router.get('/edit/:postId', withAuth, async (req, res) => {
     }
   } catch (err) {
     // If there is an error, send a 500 status and display "Failed to retrieve post data"
-    errorResponse(res, 500, 'Failed to retrieve post data');
+    res.status(500).send('Failed to retrieve post data');
   }
 });
 

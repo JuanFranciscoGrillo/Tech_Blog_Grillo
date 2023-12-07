@@ -1,10 +1,11 @@
 const express = require('express');
-const router = express.Router(); // Create a router object
-const { Post, User, Comment } = require('../../models'); // Adjust the path as needed
-const { errorResponse } = require('../../utils/helpers'); // Adjust the path as needed
+// eslint-disable-next-line new-cap
+const router = express.Router();
+const { Post, User, Comment } = require('../../models');
+const { errorResponse } = require('../../utils/helpers');
 
-// Add your route handler here
-router.get('/post/:postId', async (req, res) => {
+// Route handler for getting a post by ID
+router.get('/post/:postId', async (req, res, next) => {
   try {
     // Find the post by its ID and include the associated user and comments
     const post = await Post.findByPk(req.params.postId, {
@@ -18,14 +19,26 @@ router.get('/post/:postId', async (req, res) => {
         loggedIn: req.session.loggedIn,
       });
     } else {
-      // If the post does not exist, send a 404 status and a message
-      res.status(404).send('Post not found');
+      // If the post does not exist, throw a 404 error
+      const error = new Error('Post not found');
+      error.status = 404;
+      throw error;
     }
   } catch (err) {
-    // If an error occurs, send a 500 status and an error message
+    // Pass the error to the error handling middleware
+    next(err);
+  }
+});
+
+// Error handling middleware
+router.use((err, req, res, next) => {
+  if (err.status === 404) {
+    // Handle 404 errors with a custom response
+    res.status(404).send('Post not found');
+  } else {
+    // Handle other errors with the errorResponse helper
     errorResponse(res, 500, 'Failed to retrieve post data');
   }
 });
 
-// Export the router object
 module.exports = router;

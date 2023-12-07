@@ -1,6 +1,8 @@
+/* eslint-disable new-cap */
 // Import the required modules
 const express = require('express');
-// eslint-disable-next-line new-cap
+
+// Create a new router instance
 const router = express.Router();
 
 // Import the required routes

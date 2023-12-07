@@ -1,6 +1,9 @@
+/* eslint-disable valid-jsdoc */
+/* eslint-disable require-jsdoc */
 'use strict';
 
 // Import necessary Sequelize modules
+// eslint-disable-next-line no-unused-vars
 const { Model, DataTypes } = require('sequelize');
 
 // Define and export the Comment model
@@ -36,7 +39,8 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      commentText: {
+      content: {
+        // Renamed from commentText to content
         type: DataTypes.STRING,
         allowNull: false,
         validate: {

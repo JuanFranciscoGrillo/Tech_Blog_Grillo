@@ -1,6 +1,15 @@
 <h1>{{#if post}}Edit{{else}}Create{{/if}} Post</h1>
-<form action="{{#if post}}/api/posts/update/{{post.id}}{{else}}/api/posts/create{{/if}}" method="POST">
-  <input type="text" name="title" placeholder="Title" required value="{{post.title}}">
+<form action='/api/posts' method='POST'>
+  {{#if post}}
+    <input type='hidden' name='id' value='{{post.id}}' />
+  {{/if}}
+  <input
+    type='text'
+    name='title'
+    placeholder='Title'
+    required
+    value='{{post.title}}'
+  />
   <!-- Other form inputs here -->
-  <button type="submit">{{#if post}}Update{{else}}Create{{/if}} Post</button>
+  <button type='submit'>{{#if post}}Update{{else}}Create{{/if}} Post</button>
 </form>

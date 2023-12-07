@@ -1,5 +1,5 @@
+/* eslint-disable new-cap */
 // Import necessary modules and dependencies
-// eslint-disable-next-line new-cap
 const router = require('express').Router();
 const { Post, User, Comment } = require('../../models');
 const withAuth = require('../../utils/auth');

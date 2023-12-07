@@ -1,7 +1,7 @@
+/* eslint-disable new-cap */
 // Import necessary modules
-// eslint-disable-next-line new-cap
 const router = require('express').Router();
-const { Post, User, Comment } = require('../../models');
+const { Post } = require('../../models');
 
 // Helper function for standardized error response
 const errorResponse = (res, statusCode, message) => {
@@ -11,23 +11,9 @@ const errorResponse = (res, statusCode, message) => {
 // Get home page
 router.get('/', async (req, res) => {
   try {
-    // Fetch all posts and include related User and Comment data
+    // Fetch all posts without including related User and Comment data
     const postData = await Post.findAll({
-      include: [
-        {
-          model: User,
-          attributes: ['username'],
-        },
-        {
-          model: Comment,
-          attributes: ['content', 'createdAt'],
-          include: {
-            model: User,
-            attributes: ['username'],
-          },
-        },
-      ],
-      order: [['createdAt', 'DESC']], // Sort the posts by creation date in descending order
+      order: [['createdAt', 'DESC']],
     });
 
     // Serialize data so the template can read it
@@ -35,12 +21,15 @@ router.get('/', async (req, res) => {
 
     // Pass serialized data and session flag into template
     res.render('home', {
-      // Ensure this matches your Handlebars template file name
       posts,
-      loggedIn: req.session ? req.session.loggedIn : false, // Check if the user is logged in
+      loggedIn: req.session ? req.session.loggedIn : false,
     });
   } catch (err) {
-    errorResponse(res, 500, 'Failed to retrieve home page data'); // Handle error if failed to retrieve data
+    // Log the error for debugging purposes
+    console.error('Error in home route:', err);
+
+    // Return an error response to the client
+    errorResponse(res, 500, 'Failed to retrieve home page data');
   }
 });
 

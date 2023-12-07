@@ -8,7 +8,7 @@ let sequelize;
 const DB_NAME = 'tech_blog_Grillo';
 const DB_USER = 'root';
 const DB_PASSWORD = 'hello';
-const DB_HOST = 'localhost';
+const DB_HOST = '127.0.0.1';
 const DB_PORT = 3306;
 const SESSION_SECRET = 'Super secret secret';
 
@@ -18,6 +18,7 @@ console.log('Database User:', DB_USER);
 console.log('Database Password:', DB_PASSWORD);
 console.log('Database Host:', DB_HOST);
 console.log('Database Port:', DB_PORT);
+console.log('Session Secret:', SESSION_SECRET);
 
 // Check if the JAWSDB_URL environment variable is set (for Heroku deployment)
 if (process.env.JAWSDB_URL) {

@@ -1,3 +1,5 @@
+/* eslint-disable valid-jsdoc */
+/* eslint-disable require-jsdoc */
 'use strict';
 
 // Import necessary Sequelize modules
@@ -5,7 +7,7 @@ const { Model, DataTypes } = require('sequelize');
 const bcrypt = require('bcrypt');
 
 // Define and export the User model
-module.exports = (sequelize, DataTypes) => {
+module.exports = (sequelize) => {
   class User extends Model {
     /**
      * Check password method
@@ -21,13 +23,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // Define association here
-      // Associate User with Post model using foreign key 'userId'
-      User.hasMany(models.Post, {
-        foreignKey: 'userId',
-        onDelete: 'CASCADE',
-      });
-
-      // Associate User with Comment model using foreign key 'userId'
+      User.hasMany(models.Post, { foreignKey: 'userId', onDelete: 'CASCADE' });
       User.hasMany(models.Comment, {
         foreignKey: 'userId',
         onDelete: 'CASCADE',
@@ -38,7 +34,6 @@ module.exports = (sequelize, DataTypes) => {
   // Initialize the User model with its attributes and data types
   User.init(
     {
-      // Model attributes are defined here
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -48,22 +43,16 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
-        validate: {
-          notEmpty: true,
-          len: [3, 25], // Adjust the length as needed
-        },
+        validate: { notEmpty: true, len: [3, 25] },
       },
       password: {
         type: DataTypes.STRING,
         allowNull: false,
-        validate: {
-          len: [8, 100], // Adjust the length as needed
-        },
+        validate: { len: [8, 100] },
       },
     },
     {
       hooks: {
-        // Hashing the user's password before saving it to the database
         beforeCreate: async (userData) => {
           userData.password = await bcrypt.hash(userData.password, 10);
           return userData;

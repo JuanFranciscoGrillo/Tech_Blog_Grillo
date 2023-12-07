@@ -1,6 +1,6 @@
+/* eslint-disable new-cap */
 // Import necessary modules
 const express = require('express');
-// eslint-disable-next-line new-cap
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const { User } = require('../../models'); // Updated import path
@@ -9,7 +9,7 @@ const { User } = require('../../models'); // Updated import path
 router.get('/signup', (req, res) => {
   // Check if user is already logged in
   if (req.session.loggedIn) {
-    // Redirect to dashboard if logged in
+    // Redirect to dashboard if already logged in
     res.redirect('/dashboard');
     return;
   }
